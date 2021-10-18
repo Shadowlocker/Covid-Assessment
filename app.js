@@ -6,7 +6,7 @@ var mysql = require('mysql');
 const app = express();
 
 //catest@1234
-
+/*
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
@@ -22,6 +22,7 @@ con.connect(function(err) {
   // });
 });
 
+*/
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
