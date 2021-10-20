@@ -64,7 +64,7 @@ app.post("/success", function(req, res) {
   var password = req.body.password;
 
     var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES (?,?,?, ?, ?, ?, ?)";
-    con.query("use covid_assessment_db_instance", function(err, result) {
+    con.query("use covid_assessment_db", function(err, result) {
 
     });
     con.query(sql, [firstName, lastName, birthdayDate, Gender, Address, emailAddress, password], function (err, result) {
