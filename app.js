@@ -23,20 +23,20 @@ con.connect(function(err) {
 });
 */
 
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "suja28@TCS"
-});
+// var con = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "suja28@TCS"
+// });
 
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  //  con.query("create database covid_assessment_db_instance", function (err, result) {
-  //   if (err) throw err;
-  //   console.log("Database created");
-  //  });
-});
+// con.connect(function(err) {
+//   if (err) throw err;
+//   console.log("Connected!");
+//   //  con.query("create database covid_assessment_db_instance", function (err, result) {
+//   //   if (err) throw err;
+//   //   console.log("Database created");
+//   //  });
+// });
 
 
 app.set('view engine', 'ejs');
