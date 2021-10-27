@@ -15,6 +15,8 @@ var con = mysql.createConnection({
 
 con.connect(function(err) {
   if (err) throw err;
+  con.query("use covid_assessment_db", function(err, result) {
+  });
   console.log("Connected!");
 });
 
@@ -52,9 +54,6 @@ app.get("/signup", function(req, res) {
 });
 
 app.post("/success", function(req, res) {
-  var user = {
-
-  }
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
   var birthdayDate = req.body.birthdayDate;
@@ -64,12 +63,32 @@ app.post("/success", function(req, res) {
   var password = req.body.password;
 
     var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES (?,?,?, ?, ?, ?, ?)";
-    con.query("use covid_assessment_db", function(err, result) {
 
-    });
     con.query(sql, [firstName, lastName, birthdayDate, Gender, Address, emailAddress, password], function (err, result) {
       if (err) throw err;
-      console.log("1 record inserted"+result.insertedId);
     });
     res.render("success");
 });
+
+app.post("/login", function(req, res) {
+  var email = req.body.email;
+  var pwd = req.body.pwd;
+  var queryString = "SELECT * from users where email=?";
+  con.query(queryString, [email], function(err, result){
+    if (err) throw err;
+    console.log("result is ====" , result);
+    console.log("result is ", result[0].password);
+    try {
+      if(pwd === result[0].password) {
+        res.render("success");
+      } else {
+
+        res.render("login");
+        throw new Error('Invalid username or password');
+      }
+    } catch(ex) {
+      throw new Error(ex.toString());
+    }
+
+  })
+})
