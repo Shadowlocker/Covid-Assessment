@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 var mysql = require('mysql');
+var bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -23,11 +24,11 @@ con.connect(function(err) {
 });
 */
 
-// var con = mysql.createConnection({
-//   host: "localhost",
-//   user: "root",
-//   password: "suja28@TCS"
-// });
+ var con = mysql.createConnection({
+   host: "localhost",
+   user: "root",
+  password: "suja28@TCS"
+ });
 
 // con.connect(function(err) {
 //   if (err) throw err;
@@ -74,15 +75,20 @@ app.post("/success", function(req, res) {
   var Address = req.body.Address;
   var emailAddress = req.body.emailAddress;
   var password = req.body.password;
-  
-    var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES (?,?,?, ?, ?, ?, ?)";
+  bcrypt.hash(password,10, function(err, hash) {
+   // var sql = "INSERT INTO curd_table (first_name,last_name,username,password) VALUES ?";
+    var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES ?";
+    //var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES (?,?,?, ?, ?, ?, ?)";
+    var values = [[firstName,lastName,birthdayDate,Gender,Address,emailAddress,hash]]
+    
     con.query("use covid_assessment_db_instance", function(err, result) {
 
-    });
-    con.query(sql, [firstName, lastName, birthdayDate, Gender, Address, emailAddress, password], function (err, result) {
+      con.query(sql,[values], function (err, result, fields) {
+   // con.query(sql, [firstName, lastName, birthdayDate, Gender, Address, emailAddress, password], function (err, result) {
       if (err) throw err;
       console.log("1 record inserted"+result.insertedId);
     });
     res.render("success");
 });
-
+  });
+});
