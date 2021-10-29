@@ -8,36 +8,19 @@ const app = express();
 
 //catest@1234
 
-/*var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "catest@1234"
+var con = mysql.createConnection({
+  host: "covid-assessment-db-instance.cjotobxooc2g.us-west-1.rds.amazonaws.com",
+  user: "assessmentadmin",
+  password: "assessmentpassword"
 });
 
 con.connect(function(err) {
   if (err) throw err;
+  con.query("use covid_assessment_db", function(err, result) {
+  });
   console.log("Connected!");
-  // con.query("create database qw", function (err, result) {
-  //   if (err) throw err;
-  //   console.log("Database created");
-  // });
 });
-*/
 
- var con = mysql.createConnection({
-   host: "localhost",
-   user: "root",
-  password: "suja28@TCS"
- });
-
-// con.connect(function(err) {
-//   if (err) throw err;
-//   console.log("Connected!");
-//   //  con.query("create database covid_assessment_db_instance", function (err, result) {
-//   //   if (err) throw err;
-//   //   console.log("Database created");
-//   //  });
-// });
 
 
 app.set('view engine', 'ejs');
@@ -60,6 +43,11 @@ app.get("/about", function(req, res) {
 app.get("/contact", function(req, res) {
   res.render("contact");
 });
+
+app.get("/login", function(req, res) {
+  res.render("login");
+});
+
 app.get("/signup", function(req, res) {
   res.render("signup");
 });
@@ -75,20 +63,20 @@ app.post("/success", function(req, res) {
   var Address = req.body.Address;
   var emailAddress = req.body.emailAddress;
   var password = req.body.password;
-  bcrypt.hash(password,10, function(err, hash) {
-   // var sql = "INSERT INTO curd_table (first_name,last_name,username,password) VALUES ?";
-    var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES ?";
-    //var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES (?,?,?, ?, ?, ?, ?)";
-    var values = [[firstName,lastName,birthdayDate,Gender,Address,emailAddress,hash]]
-    
-    con.query("use covid_assessment_db_instance", function(err, result) {
 
-      con.query(sql,[values], function (err, result, fields) {
-   // con.query(sql, [firstName, lastName, birthdayDate, Gender, Address, emailAddress, password], function (err, result) {
+  bcrypt.hash(password,10, function(err, hash) {
+   
+    var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES ?";
+    
+    var values =[firstName,lastName,birthdayDate,Gender,Address,emailAddress,hash]
+
+
+    var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES (?,?,?, ?, ?, ?, ?)";
+     con.query(sql,[values], function (err, result, fields) {
       if (err) throw err;
       console.log("1 record inserted"+result.insertedId);
     });
     res.render("success");
 });
   });
-});
+
