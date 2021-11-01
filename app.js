@@ -3,15 +3,17 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
+var propertiesReader = require('properties-reader');
+var properties = propertiesReader('app.properties');
 
 const app = express();
 
 //catest@1234
 
 var con = mysql.createConnection({
- host: "covid-assessment-db-instance.cjotobxooc2g.us-west-1.rds.amazonaws.com",
- user: "assessmentadmin",
- password: "assessmentpassword"
+ host: properties.get('db.host'),
+ user: properties.get('db.user'),
+ password: properties.get('db.password'),
 });
 
 
@@ -63,13 +65,14 @@ app.post("/success", function(req, res) {
   var password = req.body.password;
   bcrypt.hash(password,10, function(err, hash) {
     var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES ?";
-    
+
     var values = [[firstName,lastName,birthdayDate,Gender,Address,emailAddress,hash]]
-    
+
     con.query(sql, [values], function (err, result) {
       if (err) throw err;
     });
     res.render("success");
+});
 });
 
 app.post("/login", function(req, res) {
@@ -78,20 +81,13 @@ app.post("/login", function(req, res) {
   var queryString = "SELECT * from users where email=?";
   con.query(queryString, [email], function(err, result){
     if (err) throw err;
-    console.log("result is ====" , result);
-    console.log("result is ", result[0].password);
-    try {
-      if(pwd === result[0].password) {
-        res.render("success");
-      } else {
-
-        res.render("login");
-        throw new Error('Invalid username or password');
-      }
-    } catch(ex) {
-      throw new Error(ex.toString());
-    }
-
+    bcrypt.compare(pwd, result[0].password, function(err, isMatched) {
+        // result == true
+        if(isMatched) {
+          res.render("success.ejs");
+        } else {
+          res.render("login.ejs");
+        }
+    });
   });
-});
 });
