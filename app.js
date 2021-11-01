@@ -4,7 +4,7 @@ const ejs = require("ejs");
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var propertiesReader = require('properties-reader');
-var properties = propertiesReader('/path/to/properties.file');
+var properties = propertiesReader('app.properties');
 
 const app = express();
 
