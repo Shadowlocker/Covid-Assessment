@@ -73,6 +73,7 @@ app.post("/success", function(req, res) {
     });
     res.render("success");
 });
+});
 
 app.post("/login", function(req, res) {
   var email = req.body.email;
@@ -80,20 +81,13 @@ app.post("/login", function(req, res) {
   var queryString = "SELECT * from users where email=?";
   con.query(queryString, [email], function(err, result){
     if (err) throw err;
-    console.log("result is ====" , result);
-    console.log("result is ", result[0].password);
-    try {
-      if(pwd === result[0].password) {
-        res.render("success");
-      } else {
-
-        res.render("login");
-        throw new Error('Invalid username or password');
-      }
-    } catch(ex) {
-      throw new Error(ex.toString());
-    }
-
+    bcrypt.compare(pwd, result[0].password, function(err, isMatched) {
+        // result == true
+        if(isMatched) {
+          res.render("success.ejs");
+        } else {
+          res.render("login.ejs");
+        }
+    });
   });
-});
 });
