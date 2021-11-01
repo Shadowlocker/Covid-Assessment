@@ -84,7 +84,7 @@ app.post("/login", function(req, res) {
     bcrypt.compare(pwd, result[0].password, function(err, isMatched) {
         // result == true
         if(isMatched) {
-          res.render("success.ejs");
+          res.render("user_home");
         } else {
           res.render("login.ejs");
         }
