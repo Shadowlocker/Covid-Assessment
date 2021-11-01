@@ -2,16 +2,18 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
 var mysql = require('mysql');
+var bcrypt = require('bcrypt');
 
 const app = express();
 
 //catest@1234
 
 var con = mysql.createConnection({
-  host: "covid-assessment-db-instance.cjotobxooc2g.us-west-1.rds.amazonaws.com",
-  user: "assessmentadmin",
-  password: "assessmentpassword"
+ host: "covid-assessment-db-instance.cjotobxooc2g.us-west-1.rds.amazonaws.com",
+ user: "assessmentadmin",
+ password: "assessmentpassword"
 });
+
 
 con.connect(function(err) {
   if (err) throw err;
@@ -19,8 +21,6 @@ con.connect(function(err) {
   });
   console.log("Connected!");
 });
-
-
 
 
 
@@ -61,10 +61,12 @@ app.post("/success", function(req, res) {
   var Address = req.body.Address;
   var emailAddress = req.body.emailAddress;
   var password = req.body.password;
-
-    var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES (?,?,?, ?, ?, ?, ?)";
-
-    con.query(sql, [firstName, lastName, birthdayDate, Gender, Address, emailAddress, password], function (err, result) {
+  bcrypt.hash(password,10, function(err, hash) {
+    var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES ?";
+    
+    var values = [[firstName,lastName,birthdayDate,Gender,Address,emailAddress,hash]]
+    
+    con.query(sql, [values], function (err, result) {
       if (err) throw err;
     });
     res.render("success");
@@ -90,5 +92,6 @@ app.post("/login", function(req, res) {
       throw new Error(ex.toString());
     }
 
-  })
-})
+  });
+});
+});
