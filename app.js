@@ -5,31 +5,34 @@ var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var propertiesReader = require('properties-reader');
 var properties = propertiesReader('app.properties');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 
-//catest@1234
-
-var con = mysql.createConnection({
- host: properties.get('db.host'),
- user: properties.get('db.user'),
- password: properties.get('db.password'),
-});
-
-
-con.connect(function(err) {
-  if (err) throw err;
-  con.query("use covid_assessment_db", function(err, result) {
-  });
-  console.log("Connected!");
-});
-
-
-
-app.set('view engine', 'ejs');
-
-app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: true}));
+
+const options = {
+    host:  properties.get('db.host'),
+    user: properties.get('db.user'),
+    password: properties.get('db.password'),
+    database: properties.get('db.name')
+};
+
+var con = mysql.createConnection(options);
+
+const sessionStore = new MySQLStore({}, con);
+
+app.use(
+    session({
+        secret: 'cookie_secret_code',
+        resave: false,
+        saveUninitialized: false,
+        store: sessionStore
+    })
+);
 
 app.listen("3000", function() {
   console.log("Server started on port 3000");
@@ -55,6 +58,14 @@ app.get("/signup", function(req, res) {
   res.render("signup");
 });
 
+app.get("/view_appointments", function(req, res) {
+  var queryString = "SELECT * from appointments where email=?";
+  con.query(queryString, [req.session.email], function(err, results){
+    if (err) throw err;
+    res.render("view_appointments", {appointments: results});
+  });
+});
+
 app.post("/success", function(req, res) {
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
@@ -76,6 +87,8 @@ app.post("/success", function(req, res) {
 });
 
 app.post("/login", function(req, res) {
+  var sess = req.session;
+  sess.email = req.body.email;
   var email = req.body.email;
   var pwd = req.body.pwd;
   var queryString = "SELECT * from users where email=?";

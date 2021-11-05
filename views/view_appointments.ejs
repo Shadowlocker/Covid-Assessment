@@ -1,0 +1,25 @@
+<%-include('user_header.ejs');%>
+<h1>Hello Rinky</h1>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Appointment Ref Number</th>
+      <th scope="col">Date</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% appointments.forEach(function(apptmnt) { %>
+      <tr>
+        <td></td>
+        <td><%=apptmnt.appointment_id%></td>
+        <td><%=apptmnt.datetime_of_appointment%></td>
+        <td></td>
+      </tr>
+<% }); %>
+    </tbody>
+    </table>
+
+<%-include('footer.ejs');%>
