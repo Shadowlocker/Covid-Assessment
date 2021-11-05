@@ -8,6 +8,7 @@ var properties = propertiesReader('app.properties');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 
+/*
 const app = express();
 
 app.use(express.static("public"));
@@ -33,6 +34,45 @@ app.use(
         store: sessionStore
     })
 );
+*/
+
+const app = express();
+
+//catest@1234
+
+/*
+var con = mysql.createConnection({
+  host: "covid-assessment-db-instance.cjotobxooc2g.us-west-1.rds.amazonaws.com",
+  user: "assessmentadmin",
+  password: "assessmentpassword"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
+
+*/
+
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "covid_assessment_db"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
+
+
+app.set('view engine', 'ejs');
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
 
 app.listen("3000", function() {
   console.log("Server started on port 3000");
@@ -44,6 +84,33 @@ app.get("/", function(req, res) {
 
 app.get("/about", function(req, res) {
   res.render("about");
+});
+
+app.get("/book_appointment", function(req, res) {
+  res.render("book_appointment");
+});
+
+app.post("/booking_success", function(req, res) {
+  var appointment = {
+
+  }
+  var firstname = req.body.firstname;
+  var lastname = req.body.lastname;
+  var email = req.body.email;
+  var datetime_of_appointment = req.body.datetime_of_appointment;
+  var status;
+
+
+    var sql = "INSERT INTO appointments(first_name, last_name, email, datetime_of_appointment, status) VALUES (?,?,?,?,?)";
+    con.query("use covid_assessment_db", function(err, result) {
+
+    });
+    con.query(sql, [firstname, lastname, email, datetime_of_appointment, 'B'], function (err, result) {
+      if (err) throw err;
+      console.log("1 record inserted"+result.insertedId);
+      console.log(datetime_of_appointment);
+    });
+    res.render("booking_success");
 });
 
 app.get("/contact", function(req, res) {
