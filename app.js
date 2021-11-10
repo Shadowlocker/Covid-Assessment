@@ -10,7 +10,7 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 
-/*
+
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
@@ -34,21 +34,6 @@ app.use(
         store: sessionStore
     })
 );
-*/
-
-var mysql = require('mysql');
-
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password",
-  database: "covid_assessment_db"
-});
-
-con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-});
 
 
 app.set('view engine', 'ejs');
