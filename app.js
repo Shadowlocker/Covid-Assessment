@@ -14,14 +14,26 @@ app.use(express.static("public"));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 
-const options = {
-    host:  properties.get('db.host'),
-    user: properties.get('db.user'),
+ const options = {
+     host:  properties.get('db.host'),
+   user: properties.get('db.user'),
     password: properties.get('db.password'),
-    database: properties.get('db.name')
+     database: properties.get('db.name')
 };
 
+
 var con = mysql.createConnection(options);
+//  var con = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//  password: "suja28@TCS"
+//  });
+//  con.connect(function(err) {
+//   if (err) throw err;
+//   con.query("use covid_assessment_db_instance", function(err, result) {
+//   });
+//   console.log("Connected!");
+// });
 
 const sessionStore = new MySQLStore({}, con);
 
@@ -58,13 +70,14 @@ app.get("/signup", function(req, res) {
   res.render("signup");
 });
 
-app.get("/view_appointments", function(req, res) {
-  var queryString = "SELECT * from appointments where email=?";
-  con.query(queryString, [req.session.email], function(err, results){
-    if (err) throw err;
-    res.render("view_appointments", {appointments: results});
-  });
-});
+
+ app.get("/view_appointments", function(req, res) {
+   var queryString = "SELECT * from appointments where email=?";
+   con.query(queryString, [req.session.email], function(err, results){
+     if (err) throw err;
+     res.render("view_appointments", {appointments: results});
+   });
+ });
 
 app.post("/success", function(req, res) {
   var firstName = req.body.firstName;
@@ -103,4 +116,37 @@ app.post("/login", function(req, res) {
         }
     });
   });
+});
+
+
+app.get("/updateprofile", function(req, res) {
+  //rest api to get all results
+  var sess = req.session;
+  var email = sess.email;
+  var queryString = "SELECT *, DATE_FORMAT(dob,'%Y-%m-%d') AS niceDate  from users where email=?";
+  con.query(queryString, [email], function(err, result){
+    if (err) throw err;
+    //res.render("signup");
+       res.render("updateprofile",{user: result[0]});
+    });
+  });
+
+  
+app.post("/updatesuccess", function(req, res) {
+  var sess = req.session;
+  var email = sess.email;
+  var firstName = req.body.firstName;
+  var lastName = req.body.lastName;
+  var birthdayDate = req.body.birthdayDate;
+  var Gender = req.body.inlineRadioOptions;
+  var Address = req.body.Address;
+ 
+    var sql = "UPDATE users SET first_name =?, last_name = ?, dob = ?, gender = ?, address = ? WHERE email= ?";
+
+    
+
+    con.query(sql,[firstName,lastName,birthdayDate,Gender,Address,email], function (err, result) {
+      if (err) throw err;
+    });
+    res.render("updatesuccess");
 });
