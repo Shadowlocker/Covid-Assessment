@@ -2,10 +2,7 @@
 
 <table class="table table-striped">
   <thead>
-    <tr>
-
-
-      
+    <tr>  
       <th scope="col">#</th>
       <th scope="col">Appointment Ref Number</th>
       <th scope="col">First Name</th>
@@ -22,10 +19,38 @@
         <td><%=apptmnt.first_name%></td>
         <td><%=apptmnt.last_name%></td>
         <td><%=apptmnt.datetime_of_appointment%></td>
-        <td></td>
+        <% if(apptmnt.datetime_of_appointment > new Date()) { %>
+          <td><button type="button" class="btn btn-primary cancellingClass" data-toggle="modal" data-target="#cancelModal"
+            data-id="<%=apptmnt.appointment_id%>">Cancel</button></td>
+          <td><button class="btn btn-primary reschedulingClass" type="button" data-toggle="modal" data-target="#rescheduleModal"
+            data-id="<%=apptmnt.appointment_id%>">Reschedule</button></td>
+        <%} else {%>
+          <td></td>
+          <td></td>
+        <%}%>
+
       </tr>
+
 <% }); %>
     </tbody>
     </table>
 
+
+<%-include('reschedule.ejs');%>
+<%-include('cancel.ejs');%>
 <%-include('footer.ejs');%>
+
+<script type="text/javascript">
+$(document).on("click", ".cancellingClass", function () {
+     var appointId = $(this).data('id');
+     $(".modal-body #cancelId").val( appointId );
+
+
+});
+$(document).on("click", ".reschedulingClass", function () {
+     var appointId = $(this).data('id');
+     $(".modal-body #rescheduleId").val( appointId );
+
+
+});
+</script>
