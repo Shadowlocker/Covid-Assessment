@@ -10,7 +10,7 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 
-
+/*
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
@@ -49,6 +49,27 @@ app.use(
     store: sessionStore
   })
 );
+*/
+
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "covid_assessment_db"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
+
+
+app.set('view engine', 'ejs');
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
 
 
 app.set('view engine', 'ejs');
@@ -68,6 +89,7 @@ app.get("/about", function(req, res) {
   res.render("about");
 });
 
+
 app.get("/results", function(req, res) {
   res.render("results");
 });
@@ -82,6 +104,7 @@ app.get("/test-results", function(req, res) {
   });
 });
 
+
 app.get("/book_appointment", function(req, res) {
   res.render("book_appointment");
 });
@@ -95,6 +118,7 @@ app.post("/booking_success", function(req, res) {
   var email = req.body.email;
   var datetime_of_appointment = req.body.datetime_of_appointment;
   var status;
+
   
 
   function randomString(length, chars) {
@@ -110,10 +134,12 @@ app.post("/booking_success", function(req, res) {
 
     });
     con.query(sql, [firstname, lastname, email, datetime_of_appointment, 'B', reference], function (err, result) {
+
       if (err) throw err;
       console.log("1 record inserted"+result.insertedId);
       console.log(datetime_of_appointment);
     });
+
     res.render("booking_success", {reference: reference});
 });
 
