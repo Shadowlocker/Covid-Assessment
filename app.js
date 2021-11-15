@@ -10,30 +10,66 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 
-
+/*
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+
 
 const options = {
-    host:  properties.get('db.host'),
-    user: properties.get('db.user'),
-    password: properties.get('db.password'),
-    database: properties.get('db.name')
+  host: properties.get('db.host'),
+  user: properties.get('db.user'),
+  password: properties.get('db.password'),
+  database: properties.get('db.name')
 };
 
+
 var con = mysql.createConnection(options);
+//  var con = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//  password: "suja28@TCS"
+//  });
+//  con.connect(function(err) {
+//   if (err) throw err;
+//   con.query("use covid_assessment_db_instance", function(err, result) {
+//   });
+//   console.log("Connected!");
+// });
 
 const sessionStore = new MySQLStore({}, con);
 
 app.use(
-    session({
-        secret: 'cookie_secret_code',
-        resave: false,
-        saveUninitialized: false,
-        store: sessionStore
-    })
+  session({
+    secret: 'cookie_secret_code',
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore
+  })
 );
+*/
+
+var mysql = require('mysql');
+
+var con = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "password",
+  database: "covid_assessment_db"
+});
+
+con.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
+
+
+app.set('view engine', 'ejs');
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
 
 
 app.set('view engine', 'ejs');
@@ -53,6 +89,7 @@ app.get("/about", function(req, res) {
   res.render("about");
 });
 
+
 app.get("/results", function(req, res) {
   res.render("results");
 });
@@ -67,6 +104,7 @@ app.get("/test-results", function(req, res) {
   });
 });
 
+
 app.get("/book_appointment", function(req, res) {
   res.render("book_appointment");
 });
@@ -80,6 +118,7 @@ app.post("/booking_success", function(req, res) {
   var email = req.body.email;
   var datetime_of_appointment = req.body.datetime_of_appointment;
   var status;
+
   
 
   function randomString(length, chars) {
@@ -95,10 +134,12 @@ app.post("/booking_success", function(req, res) {
 
     });
     con.query(sql, [firstname, lastname, email, datetime_of_appointment, 'B', reference], function (err, result) {
+
       if (err) throw err;
       console.log("1 record inserted"+result.insertedId);
       console.log(datetime_of_appointment);
     });
+
     res.render("booking_success", {reference: reference});
 });
 
@@ -114,13 +155,15 @@ app.get("/signup", function(req, res) {
   res.render("signup");
 });
 
+
 app.get("/view_appointments", function(req, res) {
   var queryString = "SELECT * from appointments where email=?";
-  con.query(queryString, [req.session.email], function(err, results){
+  con.query(queryString, [req.session.email], function(err, results) {
     if (err) throw err;
     res.render("view_appointments", {appointments: results});
   });
 });
+
 
 app.post("/success", function(req, res) {
   var firstName = req.body.firstName;
@@ -130,16 +173,18 @@ app.post("/success", function(req, res) {
   var Address = req.body.Address;
   var emailAddress = req.body.emailAddress;
   var password = req.body.password;
-  bcrypt.hash(password,10, function(err, hash) {
+  bcrypt.hash(password, 10, function(err, hash) {
     var sql = "INSERT INTO users(first_name, last_name, dob, gender, address, email, password) VALUES ?";
 
-    var values = [[firstName,lastName,birthdayDate,Gender,Address,emailAddress,hash]]
+    var values = [
+      [firstName, lastName, birthdayDate, Gender, Address, emailAddress, hash]
+    ]
 
-    con.query(sql, [values], function (err, result) {
+    con.query(sql, [values], function(err, result) {
       if (err) throw err;
     });
     res.render("success");
-});
+  });
 });
 
 app.post("/login", function(req, res) {
@@ -148,15 +193,91 @@ app.post("/login", function(req, res) {
   var email = req.body.email;
   var pwd = req.body.pwd;
   var queryString = "SELECT * from users where email=?";
-  con.query(queryString, [email], function(err, result){
+  con.query(queryString, [email], function(err, result) {
     if (err) throw err;
     bcrypt.compare(pwd, result[0].password, function(err, isMatched) {
-        // result == true
-        if(isMatched) {
-          res.render("user_home");
-        } else {
-          res.render("login.ejs");
-        }
+      // result == true
+      if (isMatched) {
+        res.render("user_home");
+      } else {
+        res.render("login.ejs");
+      }
     });
   });
+});
+
+
+
+app.get("/updateprofile", function(req, res) {
+  //rest api to get all results
+  var sess = req.session;
+  var email = sess.email;
+  var queryString = "SELECT *, DATE_FORMAT(dob,'%Y-%m-%d') AS niceDate  from users where email=?";
+  con.query(queryString, [email], function(err, result){
+    if (err) throw err;
+    //res.render("signup");
+       res.render("updateprofile",{user: result[0]});
+    });
+  });
+
+  
+app.post("/updatesuccess", function(req, res) {
+  var sess = req.session;
+  var email = sess.email;
+  var firstName = req.body.firstName;
+  var lastName = req.body.lastName;
+  var birthdayDate = req.body.birthdayDate;
+  var Gender = req.body.inlineRadioOptions;
+  var Address = req.body.Address;
+ 
+    var sql = "UPDATE users SET first_name =?, last_name = ?, dob = ?, gender = ?, address = ? WHERE email= ?";
+
+    
+
+    con.query(sql,[firstName,lastName,birthdayDate,Gender,Address,email], function (err, result) {
+      if (err) throw err;
+    });
+    res.render("updatesuccess");
+  
+app.post("/cancel", function(req, res) {
+  var queryString = "DELETE from appointments where appointment_id=?";
+  con.query(queryString, [req.body.cancelId], function(err, result) {
+    if (err) {
+      throw err;
+    } else {
+      var selectQueryString = "SELECT * from appointments where email=?";
+      con.query(selectQueryString, [req.session.email], function(err, results) {
+        if (err) throw err;
+        res.render("view_appointments", {
+          appointments: results
+        });
+      });
+
+    }
+
+  });
+});
+
+app.post("/reschedule", function(req, res) {
+  var queryString = "UPDATE appointments set datetime_of_appointment=? where appointment_id=?";
+  console.log("----", req.body.rescheduleId);
+
+  //var formattedDateOfAppointment = new Date(req.body.datetime_of_appointment).toISOString().replace(/T/, ' ').replace(/\..+/, '');
+//  console.log("----", formattedDateOfAppointment);
+  con.query(queryString, [req.body.datetime_of_appointment, req.body.rescheduleId], function(err, result) {
+    if (err) {
+      throw err;
+    } else {
+      console.log("success for update");
+      var selectQueryString = "SELECT * from appointments where email=?";
+      con.query(selectQueryString, [req.session.email], function(err, results) {
+        if (err) throw err;
+        res.render("view_appointments", {
+          appointments: results
+        });
+      });
+
+    }
+  });
+
 });
