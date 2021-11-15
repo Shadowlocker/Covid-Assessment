@@ -10,6 +10,7 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 
+
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
@@ -36,6 +37,12 @@ app.use(
   })
 );
 
+
+app.set('view engine', 'ejs');
+
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
+
 app.listen("3000", function() {
   console.log("Server started on port 3000");
 });
@@ -46,6 +53,55 @@ app.get("/", function(req, res) {
 
 app.get("/about", function(req, res) {
   res.render("about");
+});
+
+app.get("/results", function(req, res) {
+  res.render("results");
+});
+app.get("/results-faq", function(req, res) {
+  res.render("results-faq");
+});
+app.get("/test-results", function(req, res) {
+  var queryString = "SELECT * from final_results where email=?" ;
+  con.query(queryString, [req.session.email], function(err, results){
+    if (err) throw err;
+    res.render("test-results", {testResults: results});
+  });
+});
+
+app.get("/book_appointment", function(req, res) {
+  res.render("book_appointment");
+});
+
+app.post("/booking_success", function(req, res) {
+  var appointment = {
+
+  }
+  var firstname = req.body.firstname;
+  var lastname = req.body.lastname;
+  var email = req.body.email;
+  var datetime_of_appointment = req.body.datetime_of_appointment;
+  var status;
+  
+
+  function randomString(length, chars) {
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
+  }
+  var rString = randomString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  var reference= rString;
+
+    var sql = "INSERT INTO appointments(first_name, last_name, email, datetime_of_appointment, status,reference) VALUES (?,?,?,?,?,?)";
+    con.query("use covid_assessment_db", function(err, result) {
+
+    });
+    con.query(sql, [firstname, lastname, email, datetime_of_appointment, 'B', reference], function (err, result) {
+      if (err) throw err;
+      console.log("1 record inserted"+result.insertedId);
+      console.log(datetime_of_appointment);
+    });
+    res.render("booking_success", {reference: reference});
 });
 
 app.get("/contact", function(req, res) {
