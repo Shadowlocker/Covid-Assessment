@@ -1,55 +1,74 @@
 <%-include('user_header.ejs');%>
-<div class="outer-box">
-  
-<img class="img" src="\images\covid-img.jpg" width="700px"height="400px" >
-<div class="result-header">
-    <h1 > Past Results</h1>
-</div>
-    <div >
-     <table class="table table-striped">
-      <thead>
-        <tr>
-          <th scope="col">Test Result Number</th>
-          <th scope="col">Appointment Date</th>
-          <th scope="col">Result Date</th>
-          <th scope="col">Result</th>
-        </tr>
-      </thead>
-      <tbody>
-               
+  <div class="outer-box">
+
+    <img class="img" src="\images\covid-img.jpg" width="100%" height="400px">
+    <div class="result-header">
+      <h1> Past Results</h1>
+    </div>
+    <div>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Test Result Number</th>
+            <th scope="col">Appointment Date</th>
+            <th scope="col">Result Date</th>
+            <th scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+
           <% testResults.forEach(function(testResult) { %>
             <tr>
-              <td><%=testResult.results_ID%></td>
-              <td><%=testResult.appointment_date%></td>
-              <td><%=testResult.results_date%></td>
-              <td>Negative</td>
-              <td></td>
+              <td>
+                <%=testResult.results_ID%>
+              </td>
+              <td>
+                <%=testResult.appointment_date%>
+              </td>
+              <td>
+                <%=testResult.results_date%>
+              </td>
+              <td>
+                <span id="covidResult"></span>
+                <script>
+                
+                var result = ['Possitive', 'Negetive', 'Get Retested']
+              
+                  var covidResult = result[Math.floor(Math.random() * result.length)]
+                  document.getElementById("covidResult").innerHTML = covidResult
+                  
+                </script>
+
+              </td>
+
             </tr>
-          <% }); %>
-          
-      </tbody>
-    </table>
-   </div>
-    
-</div>
+            <% }); %>
 
-    <style>
-      .img{
-        /* border: springgreen 3px solid; */
-       display: block;
-       /* margin-left: auto; */
-       margin-right: auto;
-      }
-        .result-header {
-            background-color: rgba(31, 122, 175, 0.603);
-            width: 100%;
-            padding: 70px 200px 70px 200px;
-            margin-top: 50px;
+        </tbody>
+      </table>
+    </div>
 
-        }
-        .outer-box{
-          margin-bottom: 100px;
-        }
-    </style>
+  </div>
 
-<%-include('footer.ejs');%>
+  <style>
+    .img {
+      /* border: springgreen 3px solid; */
+      display: block;
+      /* margin-left: auto; */
+      margin-right: auto;
+    }
+
+    .result-header {
+      background-color: rgba(31, 122, 175, 0.603);
+      width: 100%;
+      padding: 70px 200px 70px 200px;
+      margin-top: 50px;
+
+    }
+
+    .outer-box {
+      margin-bottom: 100px;
+    }
+  </style>
+
+  <%-include('footer.ejs');%>

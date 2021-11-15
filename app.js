@@ -87,8 +87,8 @@ app.post("/booking_success", function(req, res) {
     for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
     return result;
   }
-  var rString = randomString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-  var reference= rString;
+  var reference= randomString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  
 
     var sql = "INSERT INTO appointments(first_name, last_name, email, datetime_of_appointment, status,reference) VALUES (?,?,?,?,?,?)";
     con.query("use covid_assessment_db", function(err, result) {
