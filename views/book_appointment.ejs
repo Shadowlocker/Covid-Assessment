@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="/css/book_styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script>
+    /* $(function () {
+         $('#datetime_of_appointment').datetimepicker();
+          $('#datetime_of_appointment').datetimepicker({
+              daysOfWeekDisabled: [0, 6],
+              startDate: '-3d',
+              disabledHours: [0-6, 20-24],
+             
+          }); 
+
+    });
+*/
+
+      $(function () {
+          var tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            $("#datetime_of_appointment").datetimepicker({
+             format: 'DD-MM-YYYY HH:mm',
+             minDate: tomorrow,
+             daysOfWeekDisabled: [0, 6],
+             disabledHours: [0, 1, 2, 3, 4, 5, 6, 20, 21, 22, 23, 24]
+             
+            });
+
+            });           
+    </script>
+    <title></title>
+  </head>
+  <body>
+   <form action="booking_success" method="post">
+    <div class="container">
+      <div class="panel panel-primary">
+         <div class="panel-heading">Schedule an Appointment</div>
+         <div class="panel-body">
+
+            <div class="row">
+               <div class="col-md-6">
+                  <div class="form-group">
+                     <label class="control-label">First Name</label>
+                     <input type="text" class="form-control" name="firstname" id="firstname">
+                  </div>
+               </div>
+            </div>
+
+               <div class="row">
+               <div class="col-md-6">
+                  <div class="form-group">
+                     <label class="control-label">Last Name</label>
+                     <input type="text" class="form-control" name="lastname" id="lastname">
+                  </div>
+               </div>
+            </div>
+
+            <div class="row">
+               <div class="col-md-6">
+                  <div class="form-group">
+                     <label class="control-label">Email</label>
+                     <input type="text" class="form-control" name="email" id="email">
+                  </div>
+               </div>
+            </div>
+
+            <div class="row">
+               <div class='col-md-6'>
+                  <div class="form-group">
+                     <label class="control-label">Appointment Time</label>
+                     <div class='input-group date' id="datetime_of_appointment">
+                        <input type="text" class="form-control" name="datetime_of_appointment" id="datetime_of_appointment">
+                       <!-- <input type='date' class="form-control" data-format="yyyy-MM-dd hh:mm:ss"/> -->
+                        <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            
+            </div>
+            <input type="submit" class="btn btn-primary" id="btnSubmit" value="Submit">
+         </div>
+         <input type="button" value="Go back!" onclick="history.back()">
+      </div>
+   </div>
+   </form>
+  </body>
+</html>
