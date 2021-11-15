@@ -1,17 +1,17 @@
 .container {
-    margin-top: 40px;
-  
-  }
-  
-  .panel {
-    margin:auto;
-    width: 50%;
-  }
-  
-  .panel-body {
-    width: 200%;
-  }
-  
-  .btn-primary {
-    width: 100%;
-  }
+  margin-top: 40px;
+}
+
+.panel {
+  margin:auto;
+  width: 50%;
+}
+
+.panel-body {
+  width: 200%;
+}
+
+.btn-primary {
+  width: 100%;
+}
+
