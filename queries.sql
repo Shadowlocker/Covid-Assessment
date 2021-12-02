@@ -37,3 +37,15 @@ insert into results (results_ID, user_ID, appointment_id, appointment_date, resu
 values ("1","4","24","11/10/2021 10:00 AM","result1.txt","11/10/2021 11:00 AM");
 
 
+create table available_slots (id int NOT NULL AUTO_INCREMENT, date_of_appointment date,
+time_of_appointment varchar(50), PRIMARY KEY (id));
+
+CREATE TABLE final_results (
+  results_ID int NOT NULL,
+  email varchar(45) NOT NULL,
+  appointment_id varchar(45) NOT NULL,
+  appointment_date varchar(45) NOT NULL,
+  results_date varchar(45) NOT NULL,
+  result varchar(45) DEFAULT NULL,
+  PRIMARY KEY (results_ID,appointment_date,appointment_id)
+);
