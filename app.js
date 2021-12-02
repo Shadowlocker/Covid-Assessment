@@ -10,14 +10,6 @@ const MySQLStore = require('express-mysql-session')(session);
 
 const app = express();
 
-/*
-app.use(express.static("public"));
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-
-
 const options = {
   host: properties.get('db.host'),
   user: properties.get('db.user'),
@@ -25,57 +17,25 @@ const options = {
   database: properties.get('db.name')
 };
 
-
 var con = mysql.createConnection(options);
-//  var con = mysql.createConnection({
-//   host: "localhost",
-//   user: "root",
-//  password: "suja28@TCS"
-//  });
-//  con.connect(function(err) {
-//   if (err) throw err;
-//   con.query("use covid_assessment_db_instance", function(err, result) {
-//   });
-//   console.log("Connected!");
-// });
-
-const sessionStore = new MySQLStore({}, con);
-
-app.use(
-  session({
-    secret: 'cookie_secret_code',
-    resave: false,
-    saveUninitialized: false,
-    store: sessionStore
-  })
-);
-*/
-
-var mysql = require('mysql');
-
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "password",
-  database: "covid_assessment_db"
-});
 
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
 });
 
-
+const sessionStore = new MySQLStore({}, con);
 app.set('view engine', 'ejs');
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-
-app.set('view engine', 'ejs');
-
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static("public"));
+app.use(
+    session({
+        secret: 'cookie_secret_code',
+        resave: false,
+        saveUninitialized: false,
+        store: sessionStore
+    }));
 
 app.listen("3000", function() {
   console.log("Server started on port 3000");
@@ -106,10 +66,19 @@ app.get("/test-results", function(req, res) {
 
 
 app.get("/book_appointment", function(req, res) {
-  res.render("book_appointment");
+  console.log("date------", req.body.datetime_of_appointment);
+  res.render("book");
 });
 
 app.post("/booking_success", function(req, res) {
+
+  console.log("date------", req.body.datetime_of_appointment);
+  var queryForSlots = "SELECT time_of_appointment from available_slots where date_of_appointment=?";
+  con.query(queryForSlots, ["2021-12-06"], function(err, results) {
+    if (err) throw err;
+    //res.render("view_appointments", {appointments: results});
+    console.log("results----", results);
+  });
   var appointment = {
 
   }
@@ -119,7 +88,7 @@ app.post("/booking_success", function(req, res) {
   var datetime_of_appointment = req.body.datetime_of_appointment;
   var status;
 
-  
+
 
   function randomString(length, chars) {
     var result = '';
@@ -191,6 +160,7 @@ app.post("/login", function(req, res) {
   var sess = req.session;
   sess.email = req.body.email;
   var email = req.body.email;
+
   var pwd = req.body.pwd;
   var queryString = "SELECT * from users where email=?";
   con.query(queryString, [email], function(err, result) {
@@ -220,7 +190,7 @@ app.get("/updateprofile", function(req, res) {
     });
   });
 
-  
+
 app.post("/updatesuccess", function(req, res) {
   var sess = req.session;
   var email = sess.email;
@@ -229,16 +199,16 @@ app.post("/updatesuccess", function(req, res) {
   var birthdayDate = req.body.birthdayDate;
   var Gender = req.body.inlineRadioOptions;
   var Address = req.body.Address;
- 
+
     var sql = "UPDATE users SET first_name =?, last_name = ?, dob = ?, gender = ?, address = ? WHERE email= ?";
 
-    
+
 
     con.query(sql,[firstName,lastName,birthdayDate,Gender,Address,email], function (err, result) {
       if (err) throw err;
     });
     res.render("updatesuccess");
-  
+
 app.post("/cancel", function(req, res) {
   var queryString = "DELETE from appointments where appointment_id=?";
   con.query(queryString, [req.body.cancelId], function(err, result) {
