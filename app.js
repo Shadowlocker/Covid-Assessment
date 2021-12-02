@@ -66,19 +66,10 @@ app.get("/test-results", function(req, res) {
 
 
 app.get("/book_appointment", function(req, res) {
-  console.log("date------", req.body.datetime_of_appointment);
-  res.render("book");
+  res.render("book_appointment");
 });
 
 app.post("/booking_success", function(req, res) {
-
-  console.log("date------", req.body.datetime_of_appointment);
-  var queryForSlots = "SELECT time_of_appointment from available_slots where date_of_appointment=?";
-  con.query(queryForSlots, ["2021-12-06"], function(err, results) {
-    if (err) throw err;
-    //res.render("view_appointments", {appointments: results});
-    console.log("results----", results);
-  });
   var appointment = {
 
   }
