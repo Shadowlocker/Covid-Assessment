@@ -49,6 +49,9 @@ app.get("/about", function(req, res) {
   res.render("about");
 });
 
+app.get("/privacy-policy", function(req, res) {
+  res.render("privacy-policy");
+});
 
 app.get("/results", function(req, res) {
   res.render("results");

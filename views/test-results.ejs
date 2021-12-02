@@ -1,12 +1,12 @@
 <%-include('user_header.ejs');%>
 <div class="outer-box">
-  
-<img class="img" src="\images\covid-img.jpg" width="700px"height="400px" >
-<div class="result-header">
-    <h1 > Past Results</h1>
-</div>
-    <div >
-     <table class="table table-striped">
+
+  <img class="img" src="\images\Covid-img.jpg" width="1300px" height="400px">
+  <div class="result-header">
+    <h1> Past Results</h1>
+  </div>
+  <div>
+    <table class="table table-striped">
       <thead>
         <tr>
           <th scope="col">Test Result Number</th>
@@ -16,40 +16,46 @@
         </tr>
       </thead>
       <tbody>
-               
-          <% testResults.forEach(function(testResult) { %>
-            <tr>
-              <td><%=testResult.results_ID%></td>
-              <td><%=testResult.appointment_date%></td>
-              <td><%=testResult.results_date%></td>
-              <td>Negative</td>
-              <td></td>
-            </tr>
-          <% }); %>
-          
+
+        <% testResults.forEach(function(testResult) { %>
+        <tr>
+          <td><%=testResult.results_ID%></td>
+          <td><%=testResult.appointment_date%></td>
+          <td><%=testResult.results_date%></td>
+          <td>Negative</td>
+          <td></td>
+        </tr>
+        <% }); %>
+
       </tbody>
     </table>
-   </div>
-    
+  </div>
+
 </div>
 
-    <style>
-      .img{
-        /* border: springgreen 3px solid; */
-       display: block;
-       /* margin-left: auto; */
-       margin-right: auto;
-      }
-        .result-header {
-            background-color: rgba(31, 122, 175, 0.603);
-            width: 100%;
-            padding: 70px 200px 70px 200px;
-            margin-top: 50px;
+<style>
+  .img {
+    /* border: springgreen 3px solid; */
+    display: block;
+    /* margin-left: auto; */
+    margin-right: auto;
+  }
 
-        }
-        .outer-box{
-          margin-bottom: 100px;
-        }
-    </style>
+  .result-header {
+    background-color: rgba(31, 122, 175, 0.603);
+    width: 100%;
+    padding: 50px 200px 50px 200px;
+    margin-top: 50px;
+
+  }
+
+  .outer-box {
+    margin-bottom: 100px;
+  }
+
+  .table {
+    margin-top: 20px;
+  }
+</style>
 
 <%-include('footer.ejs');%>
