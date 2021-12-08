@@ -57,3 +57,6 @@ CREATE TABLE final_results (
   result varchar(45) DEFAULT NULL,
   PRIMARY KEY (results_ID,appointment_date,appointment_id)
 );
+
+insert into final_results (email, appointment_id, appointment_date, results_date, result) values ("abcd@gmail.com", "oz1B7bOE", "2021-12-10",
+"2021-12-11", "Negative");
