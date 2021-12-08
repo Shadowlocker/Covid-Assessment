@@ -56,7 +56,7 @@
 
 </script>
 
-<form action="reschedule" method="post">
+<form action="booking_success" method="post">
   <% if(slots.length > 0) { %>
   <% slots.forEach(function(slot) { %>
     <input type="hidden" name="date_of_appointment" value="<%=slot.date_of_appointment%>">
