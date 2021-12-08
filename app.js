@@ -110,9 +110,9 @@ app.post("/booking_success", function(req, res) {
   var firstname = req.body.firstname;
   var lastname = req.body.lastname;
   var email = req.session.email;
-  console.log("date_of_appointment", req.body.date_of_appointment);
-  console.log("formatted", format.asString('YYYY-MM-DD', new Date()));
-  var date_of_appointment = moment(req.body.date_of_appointment).format('YYYY-MM-DD');
+  //console.log("date_of_appointment", req.body.date_of_appointment);
+  //console.log("formatted", format.asString('YYYY-MM-DD', new Date()));
+  var date_of_appointment = moment(req.body.date_of_appointment[0]).format('YYYY-MM-DD');
   var time_of_appointment = req.body.button;
   var status;
 
