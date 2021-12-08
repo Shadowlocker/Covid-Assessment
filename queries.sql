@@ -12,8 +12,9 @@ PRIMARY KEY (ID)
 );
 
 create table appointments (appointment_id int NOT NULL AUTO_INCREMENT,
-first_name VARCHAR(50), last_name VARCHAR(50), email VARCHAR(100),
-datetime_of_appointment datetime, status CHAR(1), PRIMARY KEY (appointment_id)
+email VARCHAR(100),
+date_of_appointment date,
+ time_of_appointment VARCHAR(50), status CHAR(1), reference varchar(50), PRIMARY KEY (appointment_id)
 );
 
 insert into appointments (first_name, last_name, email, datetime_of_appointment, status)
@@ -39,6 +40,13 @@ values ("1","4","24","11/10/2021 10:00 AM","result1.txt","11/10/2021 11:00 AM");
 
 create table available_slots (id int NOT NULL AUTO_INCREMENT, date_of_appointment date,
 time_of_appointment varchar(50), PRIMARY KEY (id));
+
+insert into available_slots (date_of_appointment, time_of_appointment) values ("2021-12-08", "11:00");
+insert into available_slots (date_of_appointment, time_of_appointment) values ("2021-12-08", "11:30");
+insert into available_slots (date_of_appointment, time_of_appointment) values ("2021-12-08", "12:00");
+insert into available_slots (date_of_appointment, time_of_appointment) values ("2021-12-08", "12:30");
+insert into available_slots (date_of_appointment, time_of_appointment) values ("2021-12-09", "13:00");
+insert into available_slots (date_of_appointment, time_of_appointment) values ("2021-12-09", "13:30");
 
 CREATE TABLE final_results (
   results_ID int NOT NULL,

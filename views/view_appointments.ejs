@@ -2,24 +2,22 @@
 
 <table class="table table-striped">
   <thead>
-    <tr>  
-      <th scope="col">#</th>
+    <tr>
+
       <th scope="col">Appointment Ref Number</th>
-      <th scope="col">First Name</th>
-      <th scope="col">Last Name</th>
-      <th scope="col">Date</th>
+      <th scope="col">Date</th
+      <th scope="col">Time</th>
       <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
     <% appointments.forEach(function(apptmnt) { %>
       <tr>
-        <td><%=apptmnt.appointment_id%></td>
-        <td></td>
-        <td><%=apptmnt.first_name%></td>
-        <td><%=apptmnt.last_name%></td>
-        <td><%=apptmnt.datetime_of_appointment%></td>
-        <% if(apptmnt.datetime_of_appointment > new Date()) { %>
+
+        <td><%=apptmnt.reference%></td>
+        <td><%=apptmnt.date_of_appointment%></td>
+        <td><%=apptmnt.time_of_appointment%></td>
+        <% if(apptmnt.date_of_appointment > new Date()) { %>
           <td><button type="button" class="btn btn-primary cancellingClass" data-toggle="modal" data-target="#cancelModal"
             data-id="<%=apptmnt.appointment_id%>">Cancel</button></td>
           <td><button class="btn btn-primary reschedulingClass" type="button" data-toggle="modal" data-target="#rescheduleModal"

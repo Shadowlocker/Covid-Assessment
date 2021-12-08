@@ -7,8 +7,16 @@ var propertiesReader = require('properties-reader');
 var properties = propertiesReader('app.properties');
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
+var moment = require("moment");
+var format = require('date-format');
+
 
 const app = express();
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.static("public"));
 
 const options = {
   host: properties.get('db.host'),
@@ -25,9 +33,7 @@ con.connect(function(err) {
 });
 
 const sessionStore = new MySQLStore({}, con);
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static("public"));
+
 
 app.use(
     session({
@@ -66,19 +72,53 @@ app.get("/test-results", function(req, res) {
 
 
 app.get("/book_appointment", function(req, res) {
-  res.render("book_appointment");
+  console.log("date------", req.body.datetime_of_appointment);
+  let now = new Date();
+  var dateString = moment(now).format('YYYY-MM-DD');
+  console.log(dateString);
+  var queryForSlots = "SELECT time_of_appointment from available_slots where date_of_appointment=?";
+  con.query(queryForSlots, [dateString], function(err, slots) {
+    if (err) throw err;
+    //res.render("view_appointments", {appointments: results});
+    console.log("slots----", slots);
+    res.render("book", {slots: slots});
+  });
+
+  //res.render("book_appointment");
 });
 
+app.post("/book_appointment", function(req, res) {
+  console.log("date------", req.body.date_of_appointment);
+  let now = new Date(req.body.date_of_appointment);
+  console.log("now", now);
+  var dateString = moment(now).format('YYYY-MM-DD');
+  console.log(dateString);
+  var queryForSlots = "SELECT date_of_appointment, time_of_appointment from available_slots where date_of_appointment=?";
+  con.query(queryForSlots, [dateString], function(err, slots) {
+    if (err) throw err;
+    //res.render("view_appointments", {appointments: results});
+    console.log("slots----", slots);
+    res.render("book", {slots: slots});
+  });
+})
+
 app.post("/booking_success", function(req, res) {
+
   var appointment = {
 
   }
   var firstname = req.body.firstname;
   var lastname = req.body.lastname;
-  var email = req.body.email;
-  var datetime_of_appointment = req.body.datetime_of_appointment;
+  var email = req.session.email;
+  console.log("date_of_appointment", req.body.date_of_appointment);
+  console.log("formatted", format.asString('YYYY-MM-DD', new Date()));
+  var date_of_appointment = moment(req.body.date_of_appointment).format('YYYY-MM-DD');
+  var time_of_appointment = req.body.button;
   var status;
 
+console.log("email", email);
+console.log("date_of_appointment", date_of_appointment);
+console.log("time_of_appointment", time_of_appointment);
 
 
   function randomString(length, chars) {
@@ -89,15 +129,20 @@ app.post("/booking_success", function(req, res) {
   var rString = randomString(8, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
   var reference= rString;
 
-    var sql = "INSERT INTO appointments(first_name, last_name, email, datetime_of_appointment, status,reference) VALUES (?,?,?,?,?,?)";
+    var sql = "INSERT INTO appointments(email, date_of_appointment, time_of_appointment, status,reference) VALUES (?,?,?,?,?)";
     con.query("use covid_assessment_db", function(err, result) {
 
     });
-    con.query(sql, [firstname, lastname, email, datetime_of_appointment, 'B', reference], function (err, result) {
+    con.query(sql, [email, date_of_appointment, time_of_appointment, 'B', reference], function (err, result) {
 
       if (err) throw err;
       console.log("1 record inserted"+result.insertedId);
-      console.log(datetime_of_appointment);
+    });
+    var deleteSql = "DELETE from available_slots where date_of_appointment=? and time_of_appointment=?";
+    con.query(deleteSql, [date_of_appointment, time_of_appointment], function (err, result) {
+
+      if (err) throw err;
+      console.log("1 record deleted");
     });
 
     res.render("booking_success", {reference: reference});
@@ -202,6 +247,7 @@ app.post("/updatesuccess", function(req, res) {
 
 app.post("/cancel", function(req, res) {
   var queryString = "DELETE from appointments where appointment_id=?";
+  console.log("cancelId====", req.body.cancelId);
   con.query(queryString, [req.body.cancelId], function(err, result) {
     if (err) {
       throw err;
@@ -221,10 +267,6 @@ app.post("/cancel", function(req, res) {
 
 app.post("/reschedule", function(req, res) {
   var queryString = "UPDATE appointments set datetime_of_appointment=? where appointment_id=?";
-  console.log("----", req.body.rescheduleId);
-
-  //var formattedDateOfAppointment = new Date(req.body.datetime_of_appointment).toISOString().replace(/T/, ' ').replace(/\..+/, '');
-//  console.log("----", formattedDateOfAppointment);
   con.query(queryString, [req.body.datetime_of_appointment, req.body.rescheduleId], function(err, result) {
     if (err) {
       throw err;

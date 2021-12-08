@@ -1,0 +1,69 @@
+<%-include('user_header.ejs');%>
+<link rel="stylesheet" href="/css/book_styles.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/momentjs/2.14.1/moment.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+
+<form id="myForm" method="post">
+
+  <div class="form-group">
+     <label class="control-label">Appointment Time</label>
+     <div class='input-group date' id="datetime_of_appointment">
+        <input type="text" class="form-control" name="date_of_appointment" id="date_of_appointment" >
+       <!-- <input type='date' class="form-control" data-format="yyyy-MM-dd hh:mm:ss"/> -->
+        <span class="input-group-addon">
+        <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+     </div>
+  </div>
+</form>
+<script type="text/javascript">
+  function dateChange() {
+     alert('hello');
+  }
+  $(function () {
+      var tomorrow = new Date();
+      //  tomorrow.setDate(tomorrow.getDate() + 1);
+        $("#datetime_of_appointment").datetimepicker({
+         format: 'YYYY-MM-DD',
+         minDate: tomorrow
+       }).on('dp.change', function (e) {
+          $(this).closest('form').submit();
+        });;
+        });
+
+
+         // document.getElementById('date_of_appointment').on("change", function() {
+         //   alert("Hello");
+         // });
+
+//          $(document).ready(function() {
+//   $('#date_of_appointment').on('change', function() {
+//      document.forms[myForm].submit();
+//   });
+// });
+
+          // $("#date_of_appointment").on("change", function() {
+          //    console.log("testing");
+          //    $(this).closest('form').submit();
+          //  });
+        //  $(this).closest('form').submit();
+      //  })
+
+</script>
+
+<form action="reschedule" method="post">
+  <% if(slots.length > 0) { %>
+  <% slots.forEach(function(slot) { %>
+    <input type="hidden" name="date_of_appointment" value="<%=slot.date_of_appointment%>">
+    <button class="btn btn-secondary" id="slot" type="submit" name="button" value="<%=slot.time_of_appointment%>"><%=slot.time_of_appointment%></button>
+    <% })} else { %>
+      <span><h4>No Slots Available</h4></span>
+      <%}%>
+</form>
+
+<%-include('footer.ejs');%>
